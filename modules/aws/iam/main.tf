@@ -1,5 +1,5 @@
 resource "aws_iam_group" "inline_group" {
-  name = "sadcloudInlineGroup"
+  name = "sadcloud-inline-group"
 
   count = var.inline_group_policy ? 1 : 0
 }
@@ -26,7 +26,7 @@ EOF
 }
 
 resource "aws_iam_user" "inline_user" {
-  name = "sadcloudInlineUser"
+  name = "sadcloud-inline-user"
 
   count = var.inline_user_policy ? 1 : 0
 }
@@ -177,7 +177,7 @@ resource "aws_iam_account_password_policy" "main" {
 resource "aws_iam_policy" "policy" {
   count = var.admin_iam_policy ? 1 : 0
 
-  name_prefix = "wildcard_IAM_policy"
+  name_prefix = "sadcloud-wildcard_IAM_policy"
   path        = "/"
 
   policy = <<EOF
@@ -197,7 +197,7 @@ EOF
 resource "aws_iam_group" "admin_not_indicated" {
   count = var.admin_not_indicated_policy ? 1 : 0
 
-  name = "sadcloud_superuser"
+  name = "sadcloud-superuser"
   path = "/"
 }
 
@@ -207,7 +207,7 @@ resource "aws_iam_policy" "admin_not_indicated_policy" {
   count = var.admin_not_indicated_policy ? 1 : 0
 
 
-  name  = "sadcloud_superuser_policy"
+  name  = "sadcloud-superuser-policy"
 
   policy = <<EOF
 {
