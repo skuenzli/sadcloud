@@ -7,7 +7,7 @@ variable "name" {
 ############## Findings ##############
 
 variable "password_policy_minimum_length" {
-  description = "insufficient minumum length"
+  description = "insufficient minimum length"
   type        = bool
   default     = false
 }
