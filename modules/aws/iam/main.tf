@@ -52,6 +52,8 @@ EOF
 
 resource "aws_iam_role" "inline_role" {
 
+  name_prefix = "sadcloud-inline-role-policy-"
+
   count = var.inline_role_policy ? 1 : 0
 
   assume_role_policy = <<EOF
