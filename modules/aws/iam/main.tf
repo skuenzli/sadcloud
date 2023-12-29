@@ -94,9 +94,16 @@ resource "aws_iam_role_policy" "inline_role_policy" {
 EOF
 }
 
-resource "aws_iam_role" "allow_all" {
+resource "aws_iam_role" "trust_all_with_mfa" {
 
   count = (var.assume_role_policy_allows_all && !var.assume_role_no_mfa) ? 1 : 0
+
+  name_prefix = "sadcloud-trust-all-with-mfa-"
+
+  inline_policy {
+    name = "deny-all"
+    policy = data.aws_iam_policy_document.deny_all.json
+  }
 
   assume_role_policy = <<EOF
 {
@@ -120,9 +127,16 @@ resource "aws_iam_role" "allow_all" {
 EOF
 }
 
-resource "aws_iam_role" "allow_all_and_no_mfa" {
+resource "aws_iam_role" "trust_all_without_mfa" {
 
   count = (var.assume_role_policy_allows_all && var.assume_role_no_mfa) ? 1 : 0
+
+  name_prefix = "sadcloud-trust-all-without-mfa-"
+
+  inline_policy {
+    name = "deny-all"
+    policy = data.aws_iam_policy_document.deny_all.json
+  }
 
   assume_role_policy = <<EOF
 {
@@ -211,4 +225,12 @@ resource "aws_iam_group_policy_attachment" "admin_not_indicated_policy-attach" {
   group = aws_iam_group.admin_not_indicated[0].id
   policy_arn = aws_iam_policy.admin_not_indicated_policy[0].arn
   count = var.admin_not_indicated_policy ? 1 : 0
+}
+
+data "aws_iam_policy_document" "deny_all" {
+  statement {
+    effect = "Deny"
+    actions   = ["*"]
+    resources = ["*"]
+  }
 }
