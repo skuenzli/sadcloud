@@ -4,7 +4,7 @@ resource "aws_eks_cluster" "example" {
   version =  var.out_of_date ? "1.14" : null
 
   vpc_config {
-    subnet_ids =  ["${var.main_subnet_id}","${var.secondary_subnet_id}"]
+    subnet_ids =  [var.main_subnet_id,var.secondary_subnet_id]
     endpoint_public_access = var.publicly_accessible
     # public_access_cidrs = "${var.globally_accessible ? ["0.0.0.0/0"] : ["127.0.0.0/8"]}"
   }
