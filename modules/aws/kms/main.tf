@@ -5,14 +5,14 @@ locals {
 }
 
 resource "aws_kms_key" "main" {
-  description             = "sadcloud key"
+  description             = "sadcloud unrotated key"
   enable_key_rotation = !var.key_rotation_disabled
 
   count = var.key_rotation_disabled ? 1 : 0
 }
 
 resource "aws_kms_alias" "main" {
-  name          = "alias/unrotated"
+  name          = "alias/sadcloud-unrotated"
   target_key_id = aws_kms_key.main[0].key_id
 
   count = var.key_rotation_disabled ? 1 : 0
@@ -53,7 +53,7 @@ EOF
 }
 
 resource "aws_kms_alias" "exposed" {
-  name          = "alias/exposed"
+  name          = "alias/sadcloud-exposed"
   target_key_id = aws_kms_key.exposed[0].key_id
 
   count = var.kms_key_exposed ? 1 : 0
