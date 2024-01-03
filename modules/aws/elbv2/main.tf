@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "access_logging" {
 resource "aws_lb" "main" {
   load_balancer_type = "application"
   enable_deletion_protection = !var.no_deletion_protection
-  subnets = ["${var.main_subnet_id}","${var.secondary_subnet_id}"]
+  subnets = [var.main_subnet_id,var.secondary_subnet_id]
 
   access_logs {
     bucket  = aws_s3_bucket.access_logging[0].bucket_prefix
