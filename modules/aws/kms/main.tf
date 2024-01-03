@@ -30,7 +30,7 @@ resource "aws_kms_key" "exposed" {
   "Id": "key-insecure-1",
   "Statement": [
     {
-      "Sid": "Enable root suer and identity policies",
+      "Sid": "Enable root user and identity policies",
       "Effect": "Allow",
       "Principal": {"AWS" : "${local.account_root_user_arn}"},
       "Action": "kms:*",
