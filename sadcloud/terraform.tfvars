@@ -6,6 +6,7 @@ all_config_findings = false
 all_ec2_findings = false
 all_elb_findings = false
 all_elbv2_findings = false
+all_eks_findings = false
 all_iam_findings = false
 all_kms_findings = false
 all_rds_findings = false
