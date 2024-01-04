@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "main" {
   bucket_prefix = var.name
-  acl    = "private"
+  # acl    = "private"
   force_destroy = true
 
   dynamic "server_side_encryption_configuration" {
@@ -101,10 +101,17 @@ data "aws_iam_policy_document" "getonly" {
 }
 
 resource "aws_s3_bucket" "getonly" {
-  bucket_prefix = "sadcloudhetonlys3"
+  bucket_prefix = "sadcloud-s3-getonly-"
   force_destroy = true
 
   count = var.s3_getobject_only ? 1 : 0
+}
+
+resource "aws_s3_bucket_public_access_block" "getonly" {
+  bucket = aws_s3_bucket.getonly[0].id
+
+  block_public_policy     = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_policy" "getonly" {
@@ -112,8 +119,8 @@ resource "aws_s3_bucket_policy" "getonly" {
   policy = data.aws_iam_policy_document.getonly[0].json
 
   count = var.s3_getobject_only ? 1 : 0
+  depends_on = [aws_s3_bucket_public_access_block.getonly]
 }
-
 
 data "aws_iam_policy_document" "public" {
   statement {
@@ -124,7 +131,10 @@ data "aws_iam_policy_document" "public" {
       identifiers = ["*"]
     }
 
-    actions = ["s3:*"]
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+    ]
 
     resources = [
       aws_s3_bucket.public[0].arn,
@@ -136,10 +146,17 @@ data "aws_iam_policy_document" "public" {
 }
 
 resource "aws_s3_bucket" "public" {
-  bucket_prefix = "sadcloudhetonlys3"
+  bucket_prefix = "sadcloud-s3-public-"
   force_destroy = true
 
   count = var.s3_public ? 1 : 0
+}
+
+resource "aws_s3_bucket_public_access_block" "public" {
+  bucket = aws_s3_bucket.public[0].id
+
+  block_public_policy     = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_policy" "public" {
@@ -147,4 +164,5 @@ resource "aws_s3_bucket_policy" "public" {
   policy = data.aws_iam_policy_document.public[0].json
 
   count = var.s3_public ? 1 : 0
+  depends_on = [aws_s3_bucket_public_access_block.public]
 }

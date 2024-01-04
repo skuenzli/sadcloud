@@ -1,5 +1,5 @@
 resource "aws_iam_group" "inline_group" {
-  name = "sadcloudInlineGroup"
+  name = "sadcloud-inline-group"
 
   count = var.inline_group_policy ? 1 : 0
 }
@@ -26,7 +26,7 @@ EOF
 }
 
 resource "aws_iam_user" "inline_user" {
-  name = "sadcloudInlineUser"
+  name = "sadcloud-inline-user"
 
   count = var.inline_user_policy ? 1 : 0
 }
@@ -51,6 +51,8 @@ EOF
 }
 
 resource "aws_iam_role" "inline_role" {
+
+  name_prefix = "sadcloud-inline-role-policy-"
 
   count = var.inline_role_policy ? 1 : 0
 
@@ -94,9 +96,16 @@ resource "aws_iam_role_policy" "inline_role_policy" {
 EOF
 }
 
-resource "aws_iam_role" "allow_all" {
+resource "aws_iam_role" "trust_all_with_mfa" {
 
   count = (var.assume_role_policy_allows_all && !var.assume_role_no_mfa) ? 1 : 0
+
+  name_prefix = "sadcloud-trust-all-with-mfa-"
+
+  inline_policy {
+    name = "deny-all"
+    policy = data.aws_iam_policy_document.deny_all.json
+  }
 
   assume_role_policy = <<EOF
 {
@@ -120,9 +129,16 @@ resource "aws_iam_role" "allow_all" {
 EOF
 }
 
-resource "aws_iam_role" "allow_all_and_no_mfa" {
+resource "aws_iam_role" "trust_all_without_mfa" {
 
   count = (var.assume_role_policy_allows_all && var.assume_role_no_mfa) ? 1 : 0
+
+  name_prefix = "sadcloud-trust-all-without-mfa-"
+
+  inline_policy {
+    name = "deny-all"
+    policy = data.aws_iam_policy_document.deny_all.json
+  }
 
   assume_role_policy = <<EOF
 {
@@ -161,7 +177,7 @@ resource "aws_iam_account_password_policy" "main" {
 resource "aws_iam_policy" "policy" {
   count = var.admin_iam_policy ? 1 : 0
 
-  name_prefix = "wildcard_IAM_policy"
+  name_prefix = "sadcloud-wildcard_IAM_policy"
   path        = "/"
 
   policy = <<EOF
@@ -181,7 +197,7 @@ EOF
 resource "aws_iam_group" "admin_not_indicated" {
   count = var.admin_not_indicated_policy ? 1 : 0
 
-  name = "sadcloud_superuser"
+  name = "sadcloud-superuser"
   path = "/"
 }
 
@@ -191,7 +207,7 @@ resource "aws_iam_policy" "admin_not_indicated_policy" {
   count = var.admin_not_indicated_policy ? 1 : 0
 
 
-  name  = "sadcloud_superuser_policy"
+  name  = "sadcloud-superuser-policy"
 
   policy = <<EOF
 {
@@ -211,4 +227,12 @@ resource "aws_iam_group_policy_attachment" "admin_not_indicated_policy-attach" {
   group = aws_iam_group.admin_not_indicated[0].id
   policy_arn = aws_iam_policy.admin_not_indicated_policy[0].arn
   count = var.admin_not_indicated_policy ? 1 : 0
+}
+
+data "aws_iam_policy_document" "deny_all" {
+  statement {
+    effect = "Deny"
+    actions   = ["*"]
+    resources = ["*"]
+  }
 }

@@ -1,6 +1,5 @@
 resource "aws_s3_bucket" "access_logging" {
   bucket_prefix = var.name
-  acl    = "private"
   force_destroy = true
 
   count = var.no_access_logs && (var.no_deletion_protection || var.older_ssl_policy) ? 1 : 0
@@ -9,7 +8,7 @@ resource "aws_s3_bucket" "access_logging" {
 resource "aws_lb" "main" {
   load_balancer_type = "application"
   enable_deletion_protection = !var.no_deletion_protection
-  subnets = ["${var.main_subnet_id}","${var.secondary_subnet_id}"]
+  subnets = [var.main_subnet_id,var.secondary_subnet_id]
 
   access_logs {
     bucket  = aws_s3_bucket.access_logging[0].bucket_prefix
