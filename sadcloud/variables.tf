@@ -41,7 +41,13 @@ variable "all_ebs_findings" {
 }
 
 variable "all_ec2_findings" {
-  description = "enable all ec2 findings"
+  description = "enable all ec2 findings (includes instances - costs money)"
+  type        = bool
+  default     = false
+}
+
+variable "all_ec2_sg_findings" {
+  description = "enable all ec2 security group findings (no instances, config-only)"
   type        = bool
   default     = false
 }

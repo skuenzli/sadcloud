@@ -9,7 +9,7 @@ resource "aws_db_instance" "main" {
   storage_type         = "gp2"
   engine               = "mysql"
   instance_class       = "db.t2.micro"
-  db_name              = var.name
+  name                 = var.name
   username             = "foo"
   password             = "foobarbaz"
   skip_final_snapshot = true

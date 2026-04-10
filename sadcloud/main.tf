@@ -4,7 +4,7 @@ module "network" {
   source = "../modules/aws/network"
 
   # This is a workaround until Terraform supports dynamic modules or counts for modules
-  needs_network = false || var.all_findings || var.all_ec2_findings || var.all_elbv2_findings || var.all_rds_findings || var.all_redshift_findings || var.all_eks_findings
+  needs_network = false || var.all_findings || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_elbv2_findings || var.all_rds_findings || var.all_redshift_findings || var.all_eks_findings
 }
 
 ############## SERVICES ##############
@@ -59,23 +59,25 @@ module "ec2" {
    main_subnet_id = module.network.main_subnet_id
    vpc_id = module.network.vpc_id
 
+   # Instance findings (costs money - EC2 instances)
    disallowed_instance_type = false || var.all_ec2_findings || var.all_findings
    instance_with_public_ip = false || var.all_ec2_findings || var.all_findings
    instance_with_user_data_secrets = false || var.all_ec2_findings || var.all_findings
-   security_group_opens_all_ports_to_all = false || var.all_ec2_findings || var.all_findings
-   security_group_opens_all_ports_to_self = false || var.all_ec2_findings || var.all_findings
-   security_group_opens_icmp_to_all = false || var.all_ec2_findings || var.all_findings
-   security_group_opens_known_port_to_all = false || var.all_ec2_findings || var.all_findings
-   security_group_opens_plaintext_port = false || var.all_ec2_findings || var.all_findings
-   security_group_opens_port_range = false || var.all_ec2_findings || var.all_findings
-   security_group_opens_port_to_all = false || var.all_ec2_findings || var.all_findings
-   security_group_whitelists_aws_ip_from_banned_region = false || var.all_ec2_findings || var.all_findings
-   security_group_whitelists_aws = false || var.all_ec2_findings || var.all_findings
-   ec2_security_group_whitelists_unknown_cidrs = false || var.all_ec2_findings || var.all_findings
-   ec2_unused_security_group = false || var.all_ec2_findings || var.all_findings
-   ec2_unneeded_security_group = false || var.all_ec2_findings || var.all_findings
-   ec2_unexpected_security_group = false || var.all_ec2_findings || var.all_findings
-   ec2_overlapping_security_group = false || var.all_ec2_findings || var.all_findings
+   # Security group findings (config-only, no instances)
+   security_group_opens_all_ports_to_all = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   security_group_opens_all_ports_to_self = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   security_group_opens_icmp_to_all = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   security_group_opens_known_port_to_all = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   security_group_opens_plaintext_port = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   security_group_opens_port_range = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   security_group_opens_port_to_all = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   security_group_whitelists_aws_ip_from_banned_region = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   security_group_whitelists_aws = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   ec2_security_group_whitelists_unknown_cidrs = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   ec2_unused_security_group = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   ec2_unneeded_security_group = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   ec2_unexpected_security_group = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
+   ec2_overlapping_security_group = false || var.all_ec2_findings || var.all_ec2_sg_findings || var.all_findings
 }
 
 module "ecr" {
